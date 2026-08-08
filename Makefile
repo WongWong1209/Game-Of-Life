@@ -250,7 +250,7 @@ endif
 
 # Define include paths for required headers
 # NOTE: Several external required libraries (stb and others)
-INCLUDE_PATHS = -I. -I$(RAYLIB_PATH)/src -I$(RAYLIB_PATH)/src/external
+INCLUDE_PATHS = -I. -Iinclude -I$(RAYLIB_PATH)/src -I$(RAYLIB_PATH)/src/external
 ifneq ($(wildcard /opt/homebrew/include/.*),)
     INCLUDE_PATHS += -I/opt/homebrew/include
 endif
@@ -270,7 +270,7 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     ifeq ($(PLATFORM_OS),LINUX)
         # Reset everything.
         # Precedence: immediately local, installed version, raysan5 provided libs -I$(RAYLIB_H_INSTALL_PATH) -I$(RAYLIB_PATH)/release/include
-        INCLUDE_PATHS = -I$(RAYLIB_H_INSTALL_PATH) -isystem. -isystem$(RAYLIB_PATH)/src -isystem$(RAYLIB_PATH)/release/include -isystem$(RAYLIB_PATH)/src/external
+        INCLUDE_PATHS = -Iinclude -I$(RAYLIB_H_INSTALL_PATH) -isystem. -isystem$(RAYLIB_PATH)/src -isystem$(RAYLIB_PATH)/release/include -isystem$(RAYLIB_PATH)/src/external
     endif
 endif
 
@@ -361,16 +361,19 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
 endif
 
 # Define a recursive wildcard function
-rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
+rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
 
-# Define all source files required
+# Source and object directories
 SRC_DIR = src
 OBJ_DIR = obj
 
-# Define all object files from source files
-SRC = $(call rwildcard, *.c, *.h)
-#OBJS = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-OBJS ?= main.cpp
+# Find every .cpp file inside src/ recursively
+SRC = $(call rwildcard,$(SRC_DIR)/,*.cpp)
+
+# Convert:
+# src/grid.cpp          -> obj/grid.o
+# src/rules/conway.cpp  -> obj/rules/conway.o
+OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC))
 
 # For Android platform we call a custom Makefile.Android
 ifeq ($(PLATFORM),PLATFORM_ANDROID)
@@ -393,7 +396,8 @@ $(PROJECT_NAME): $(OBJS)
 # Compile source files
 # NOTE: This pattern will compile every module defined on $(OBJS)
 #%.o: %.c
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(dir $@)
 	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE_PATHS) -D$(PLATFORM)
 
 # Clean everything
@@ -418,4 +422,3 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
 	del *.o *.html *.js
 endif
 	@echo Cleaning done
-

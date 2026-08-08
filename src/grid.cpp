@@ -1,64 +1,7 @@
-#include <iostream>
+#include "grid.h"
+
 #include <raylib.h>
-
-using namespace std;
-
-const int SCREEN_WIDTH = 1200;
-const int SCREEN_HEIGHT = 1200;
-const int SCREEN_FPS = 20;
-const int CELL_SIZE = 5;
-
-const int GRID_WIDTH = SCREEN_WIDTH / CELL_SIZE;
-const int GRID_HEIGHT = SCREEN_HEIGHT / CELL_SIZE;
-
-struct Cell {
-    bool isAlive;
-
-    unsigned char r;
-    unsigned char g;
-    unsigned char b;
-};
-
-void updateGrid(Cell grid[GRID_WIDTH][GRID_HEIGHT]);
-void drawGrid(Cell grid[GRID_WIDTH][GRID_HEIGHT]);
-void initGrid(Cell grid[GRID_WIDTH][GRID_HEIGHT]);
-void randomizeGrid(Cell grid[GRID_WIDTH][GRID_HEIGHT]);
-void clearGrid(Cell grid[GRID_WIDTH][GRID_HEIGHT]);
-void paintCell(Cell grid[GRID_WIDTH][GRID_HEIGHT]);
-
-int main () {
-    bool isRunning = true;
-
-    // init window
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game of Life");
-    SetTargetFPS(SCREEN_FPS);
-
-    // init grid
-    Cell grid[GRID_WIDTH][GRID_HEIGHT];
-    initGrid(grid);
-
-    // main loop
-    while (WindowShouldClose() == false){
-        if(IsKeyPressed(KEY_SPACE)) {
-            isRunning = !isRunning;
-        }
-        paintCell(grid);
-
-        BeginDrawing();
-            ClearBackground(BLACK);
-
-            if (isRunning) {
-                updateGrid(grid);
-            }
-
-            randomizeGrid(grid);
-            clearGrid(grid);
-            drawGrid(grid);
-        EndDrawing();
-    }
-
-    CloseWindow();
-}
+#include <cstring>
 
 void initGrid(Cell grid[GRID_WIDTH][GRID_HEIGHT]) {
     int cx = GRID_WIDTH / 2;
@@ -134,7 +77,18 @@ void drawGrid(Cell grid[GRID_WIDTH][GRID_HEIGHT]) {
     for (int x = 0; x < GRID_WIDTH; x++) {
         for (int y = 0; y < GRID_HEIGHT; y++) {
             if (grid[x][y].isAlive) {
-                DrawRectangle(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, Color{grid[x][y].r, grid[x][y].g, grid[x][y].b, 255});
+                DrawRectangle(
+                    x * CELL_SIZE, 
+                    y * CELL_SIZE, 
+                    CELL_SIZE, 
+                    CELL_SIZE, 
+                    Color{
+                        grid[x][y].r, 
+                        grid[x][y].g, 
+                        grid[x][y].b, 
+                        255
+                    }
+                );
             }
         }
     }
@@ -167,21 +121,30 @@ void clearGrid(Cell grid[GRID_WIDTH][GRID_HEIGHT]) {
     }
 }
 
-void paintCell(Cell grid[GRID_WIDTH][GRID_HEIGHT]) {
-    int cellX = GetMouseX() / CELL_SIZE;
-    int cellY = GetMouseY() / CELL_SIZE;
+void paintCell(
+    Cell grid[GRID_WIDTH][GRID_HEIGHT],
+    Camera2D camera,
+    Rectangle gameView
+) {
+    Vector2 mouseScreen = GetMousePosition();
 
-    if (cellX < 0 || cellX >= GRID_WIDTH ||
-        cellY < 0 || cellY >= GRID_HEIGHT)
-        return;
+    if (!CheckCollisionPointRec(mouseScreen, gameView)) return;
+
+    Vector2 mouseWorld = GetScreenToWorld2D(mouseScreen, camera);
+
+    int cellX = (int)(mouseWorld.x / CELL_SIZE);
+    int cellY = (int)(mouseWorld.y / CELL_SIZE);
+
+    if (cellX < 0 || cellX >= GRID_WIDTH || cellY < 0 || cellY >= GRID_HEIGHT) return;
 
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
         grid[cellX][cellY].isAlive = true;
-        grid[cellX][cellY].r = (unsigned char)GetRandomValue(0,255);
-        grid[cellX][cellY].g = (unsigned char)GetRandomValue(0,255);
-        grid[cellX][cellY].b = (unsigned char)GetRandomValue(0,255);
+        grid[cellX][cellY].r = GetRandomValue(0, 255);
+        grid[cellX][cellY].g = GetRandomValue(0, 255);
+        grid[cellX][cellY].b = GetRandomValue(0, 255);
     }
 
-    if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
+    if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
         grid[cellX][cellY].isAlive = false;
+    }
 }
