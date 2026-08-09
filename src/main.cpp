@@ -23,19 +23,13 @@ int main () {
     Rectangle gameView = ui.layoutRecs[1];
 
     Camera2D camera = {};
-
     camera.target = {0.0f, 0.0f};
-
-    camera.offset = {
-        gameView.x,
-        gameView.y
-    };
-
+    camera.offset = { gameView.x, gameView.y };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
     // init grid
-    Cell grid[GRID_WIDTH][GRID_HEIGHT]{};
+    static Cell grid[GRID_WIDTH][GRID_HEIGHT]{};
     initGrid(grid);
 
     // main loop

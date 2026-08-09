@@ -4,11 +4,11 @@
 #include "raylib.h"
 
 struct Cell {
-    bool isAlive;
+    float life = 0.0f;
 
-    unsigned char r;
-    unsigned char g;
-    unsigned char b;
+    unsigned char r = 255;
+    unsigned char g = 255;
+    unsigned char b = 255;
 };
 
 void updateGrid(Cell grid[GRID_WIDTH][GRID_HEIGHT]);

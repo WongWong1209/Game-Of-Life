@@ -70,9 +70,6 @@ extern "C" {            // Prevents name mangling of functions
 //----------------------------------------------------------------------------------
 GuiGameOfLifeUiState InitGuiGameOfLifeUi(void);
 void GuiGameOfLifeUi(GuiGameOfLifeUiState *state);
-static void Button006();
-static void Button007();
-static void Button008();
 
 #ifdef __cplusplus
 }
