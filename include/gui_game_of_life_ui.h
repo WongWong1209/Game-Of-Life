@@ -20,6 +20,7 @@
 **********************************************************************************************/
 
 #include "raylib.h"
+#include "grid.h"
 
 // WARNING: raygui implementation is expected to be defined before including this header
 #undef RAYGUI_IMPLEMENTATION
@@ -34,9 +35,14 @@ typedef struct {
     bool WindowBox000Active;
     bool TextBox004EditMode;
     char TextBox004Text[128];
+
     Color ColorPicker010Value;
     float Slider011Value;
     float Slider014Value;
+
+    bool randomPressed;
+    bool clearPressed;
+    bool playPausePressed;
 
     Rectangle layoutRecs[15];
 
@@ -127,18 +133,6 @@ GuiGameOfLifeUiState InitGuiGameOfLifeUi(void)
 
     return state;
 }
-static void Button006()
-{
-    // TODO: Implement control logic
-}
-static void Button007()
-{
-    // TODO: Implement control logic
-}
-static void Button008()
-{
-    // TODO: Implement control logic
-}
 
 
 void GuiGameOfLifeUi(GuiGameOfLifeUiState *state)
@@ -147,9 +141,9 @@ void GuiGameOfLifeUi(GuiGameOfLifeUiState *state)
     const char *GroupBox002Text = "CONTROL";
     const char *Label003Text = "World Size";
     const char *GroupBox005Text = "Action Buttons";
-    const char *Button006Text = "Random";
-    const char *Button007Text = "Clear";
-    const char *Button008Text = "Play / Pause";
+    const char *Button006Text = "Random (R)";
+    const char *Button007Text = "Clear (C)";
+    const char *Button008Text = "Play / Pause (SPACE)";
     const char *GroupBox009Text = "Brush Settings";
     const char *Slider011Text = "";
     const char *Label012Text = "Brush Size";
@@ -167,9 +161,19 @@ void GuiGameOfLifeUi(GuiGameOfLifeUiState *state)
     GuiLabel(state->layoutRecs[3], Label003Text);
     if (GuiTextBox(state->layoutRecs[4], state->TextBox004Text, 128, state->TextBox004EditMode)) state->TextBox004EditMode = !state->TextBox004EditMode;
     GuiGroupBox(state->layoutRecs[5], GroupBox005Text);
-    if (GuiButton(state->layoutRecs[6], Button006Text)) Button006(); 
-    if (GuiButton(state->layoutRecs[7], Button007Text)) Button007(); 
-    if (GuiButton(state->layoutRecs[8], Button008Text)) Button008(); 
+
+    if (GuiButton(state->layoutRecs[6], Button006Text)) {
+        state->randomPressed = true;
+    }
+
+    if (GuiButton(state->layoutRecs[7], Button007Text)) {
+        state->clearPressed = true;
+    }
+
+    if (GuiButton(state->layoutRecs[8], Button008Text)) {
+        state->playPausePressed = true;
+    }
+    
     GuiGroupBox(state->layoutRecs[9], GroupBox009Text);
     GuiColorPicker(state->layoutRecs[10], ColorPicker010Text, &state->ColorPicker010Value);
     GuiSlider(state->layoutRecs[11], Slider011Text, NULL, &state->Slider011Value, 0, 100);

@@ -8,12 +8,29 @@ void initGrid(Cell grid[GRID_WIDTH][GRID_HEIGHT]) {
     int cy = GRID_HEIGHT / 2;
 
     grid[cx][cy].isAlive = true;
+    grid[cx][cy].r = 255;
+    grid[cx][cy].g = 255;
+    grid[cx][cy].b = 255;
+    
     grid[cx + 1][cy].isAlive = true;
+    grid[cx + 1][cy].r = 255;
+    grid[cx + 1][cy].g = 255;
+    grid[cx + 1][cy].b = 255;
 
     grid[cx - 1][cy + 1].isAlive = true;
+    grid[cx - 1][cy + 1].r = 255;
+    grid[cx - 1][cy + 1].g = 255;
+    grid[cx - 1][cy + 1].b = 255;
+
     grid[cx][cy + 1].isAlive = true;
+    grid[cx][cy + 1].r = 255;
+    grid[cx][cy + 1].g = 255;
+    grid[cx][cy + 1].b = 255;
 
     grid[cx][cy + 2].isAlive = true;
+    grid[cx][cy + 2].r = 255;
+    grid[cx][cy + 2].g = 255;
+    grid[cx][cy + 2].b = 255;
 }
 
 void updateGrid(Cell grid[GRID_WIDTH][GRID_HEIGHT]) {
@@ -95,28 +112,24 @@ void drawGrid(Cell grid[GRID_WIDTH][GRID_HEIGHT]) {
 }
 
 void randomizeGrid(Cell grid[GRID_WIDTH][GRID_HEIGHT]) {
-    if(IsKeyPressed(KEY_R)) {
-        for (int x = 0; x < GRID_WIDTH; x++) {
-            for (int y = 0; y < GRID_HEIGHT; y++) {
-                if(GetRandomValue(0, 1)) {
-                    grid[x][y].isAlive = true;
-                    grid[x][y].r = (unsigned char)GetRandomValue(0,255);
-                    grid[x][y].g = (unsigned char)GetRandomValue(0,255);
-                    grid[x][y].b = (unsigned char)GetRandomValue(0,255);
-                } else {
-                    grid[x][y].isAlive = false;
-                }
+    for (int x = 0; x < GRID_WIDTH; x++) {
+        for (int y = 0; y < GRID_HEIGHT; y++) {
+            if(GetRandomValue(0, 1)) {
+                grid[x][y].isAlive = true;
+                grid[x][y].r = (unsigned char)GetRandomValue(0,255);
+                grid[x][y].g = (unsigned char)GetRandomValue(0,255);
+                grid[x][y].b = (unsigned char)GetRandomValue(0,255);
+            } else {
+                grid[x][y].isAlive = false;
             }
         }
     }
 }
 
 void clearGrid(Cell grid[GRID_WIDTH][GRID_HEIGHT]) {
-    if(IsKeyPressed(KEY_C)) {
-        for (int x = 0; x < GRID_WIDTH; x++) {
-            for (int y = 0; y < GRID_HEIGHT; y++) {
-                grid[x][y].isAlive = false;
-            }
+    for (int x = 0; x < GRID_WIDTH; x++) {
+        for (int y = 0; y < GRID_HEIGHT; y++) {
+            grid[x][y].isAlive = false;
         }
     }
 }

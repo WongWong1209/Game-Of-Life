@@ -40,9 +40,10 @@ int main () {
 
     // main loop
     while (WindowShouldClose() == false){
-        if(IsKeyPressed(KEY_SPACE)) {
-            isRunning = !isRunning;
-        }
+        ui.randomPressed = false;
+        ui.clearPressed = false;
+        ui.playPausePressed = false;
+
         paintCell(grid, camera, gameView);
 
         Vector2 mouse = GetMousePosition();
@@ -75,18 +76,13 @@ int main () {
                 (int)gameView.height
             );
                 BeginMode2D(camera);
-
-                    if (isRunning) {
-                        updateGrid(grid);
-                    }
-
-                    randomizeGrid(grid);
-                    clearGrid(grid);
+                    if (isRunning) { updateGrid(grid); }
+                    if(IsKeyPressed(KEY_R) || ui.randomPressed) { randomizeGrid(grid); }
+                    if(IsKeyPressed(KEY_C) || ui.clearPressed) { clearGrid(grid); }
+                    if(IsKeyPressed(KEY_SPACE) || ui.playPausePressed) { isRunning = !isRunning; }
                     drawGrid(grid);
-
                 EndMode2D();
             EndScissorMode();
-
         EndDrawing();
     }
 
