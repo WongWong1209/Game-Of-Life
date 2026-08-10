@@ -26,7 +26,11 @@
 # Define required raylib variables
 PROJECT_NAME       ?= game
 RAYLIB_VERSION     ?= 4.5.0
-RAYLIB_PATH        ?= ..\..
+RAYLIB_PATH ?= ../..
+
+ifeq ($(OS),Windows_NT)
+    RAYLIB_PATH = C:/raylib/raylib
+endif
 
 # Define compiler path on Windows
 COMPILER_PATH      ?= C:/raylib/w64devkit/bin

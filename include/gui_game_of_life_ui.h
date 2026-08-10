@@ -146,13 +146,15 @@ void GuiGameOfLifeUi(GuiGameOfLifeUiState *state)
     const char *Label012Text = "Brush Size";
     const char *Label013Text = "Eraser Size";
     const char *Slider014Text = "";
-    const char *Panel001Text = "";
+    const char *Panel001Text = "Viewport";
     const char *ColorPicker010Text = "";
     
     if (state->WindowBox000Active)
     {
         state->WindowBox000Active = !GuiWindowBox(state->layoutRecs[0], WindowBox000Text);
-        GuiPanel(state->layoutRecs[1], Panel001Text);
+
+        DrawRectangleRec(state->layoutRecs[1], BLACK);
+        GuiGroupBox(state->layoutRecs[1], Panel001Text);
     }
     GuiGroupBox(state->layoutRecs[2], GroupBox002Text);
     GuiLabel(state->layoutRecs[3], Label003Text);
